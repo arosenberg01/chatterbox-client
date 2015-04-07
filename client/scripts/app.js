@@ -13,11 +13,30 @@ var message = {};
 message.roomname = "4chan";
 message.username = username;
 
-
+var chatRooms = {};
 
 var app = {};
 
 app.init = function() {
+
+  $.ajax({
+    url: app.server,
+    type: "GET",
+    contentType: "application/json",
+    success: function (data) {
+      var room;
+      for (var i = 0; i < data.results.length; i++) {
+        room = data.results[i].roomname;
+        if (!chatRooms.hasOwnProperty(room)) {
+          chatRooms[room] = room;
+          $("#roomSelect").append('<button class="rooms" data-name=' + room + ">" + room + '</button>');
+        }
+      }
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed');
+    }
+  });
 
   $('#send').on('click', function() {
     message.text = $('#message').val();
@@ -32,6 +51,33 @@ app.init = function() {
   });
 
 
+  $('#roomSelect').on('click', '.rooms', function() {
+    var that = $(this);
+    $.ajax({
+    url: app.server,
+    type: "GET",
+    contentType: "application/json",
+    success: function (data) {
+      // debugger;
+      console.log(that.data('name'));
+      var messages = "";
+      for (var i = data.results.length-1; i > 0; i--) {
+        if (data.results[i].roomname === that.data('name')) {
+        messages += "</br><span class='username'>" + escapeHtml(data.results[i].username) + "</span>: "
+        + escapeHtml(data.results[i].text) + " " + escapeHtml(data.results[i].roomname);
+        // messages = escapeHtml(messages);
+        }
+      }
+      app.addMessage(messages);
+    }
+    });
+  });
+};
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
 };
 
 app.server = "https://api.parse.com/1/classes/chatterbox?order=-createdAt";
@@ -59,8 +105,9 @@ app.fetch = function() {
     success: function (data) {
       var messages = "";
       for (var i = data.results.length-1; i > 0; i--) {
-        messages += "</br><span class='username'>" + data.results[i].username + "</span>: "
-        + data.results[i].text + " " + data.results[i].roomname;
+        messages += "</br><span class='username " + escapeHtml(data.results[i].username) + ">" + escapeHtml(data.results[i].username) + "</span>: "
+        + escapeHtml(data.results[i].text) + " " + escapeHtml(data.results[i].roomname);
+        // messages = escapeHtml(messages);
       }
       app.addMessage(messages);
       // setTimeout(app.fetch, 1000);
@@ -87,12 +134,36 @@ app.addRoom = function(room) {
 }
 
 app.addFriend = function() {
-
+  var friend = $(this).user
 }
 
 app.handleSubmit = function(message) {
   app.send(message);
 }
 
+/*
+
+$('#roomSelect').on('click', '.rooms', function() {
+    $.ajax({
+    url: app.server + "&where={'roomname' : " + $(this).data('name') + "}",
+    type: "GET",
+    contentType: "application/json",
+    success: function (data) {
+      var messages = "";
+      // debugger;
+      for (var i = data.results.length-1; i > 0; i--) {
+        // if (data.results[i].roomname === $(this).data('name')) {
+        messages += "</br><span class='username'>" + escapeHtml(data.results[i].username) + "</span>: "
+        + escapeHtml(data.results[i].text) + " " + escapeHtml(data.results[i].roomname);
+        // messages = escapeHtml(messages);
+        // }
+      }
+      app.addMessage(messages);
+    }
+    });
+  });
+};
+
+*/
 
 
