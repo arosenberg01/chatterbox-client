@@ -13,6 +13,7 @@ body {
     padding: 50px 60px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
+    float: left;
 }
 
 #main h1 {
@@ -84,7 +85,7 @@ form input[type=text] {
 }
 
 #roomSelect {
-    float: right;
+    float: left;
     height: 600px;
     width: 100px;
 }

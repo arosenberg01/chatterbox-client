@@ -46,8 +46,10 @@ app.init = function() {
     app.fetch();
   });
 
-  $('#main').on('click', ".username", function() {
-    app.addFriend();
+  $('#chats').on('click', "a", function() {
+    console.log(this.className)
+    app.addFriend(this.className);
+
   });
 
 
@@ -105,7 +107,7 @@ app.fetch = function() {
     success: function (data) {
       var messages = "";
       for (var i = data.results.length-1; i > 0; i--) {
-        messages += "</br><span class='username " + escapeHtml(data.results[i].username) + ">" + escapeHtml(data.results[i].username) + "</span>: "
+        messages += "</br><a class='" + escapeHtml(data.results[i].username) +  "'>" + escapeHtml(data.results[i].username) + "</a>: "
         + escapeHtml(data.results[i].text) + " " + escapeHtml(data.results[i].roomname);
         // messages = escapeHtml(messages);
       }
@@ -133,8 +135,9 @@ app.addRoom = function(room) {
   $('#roomSelect').append('<button id="pickRoom">Pick Room</button>')
 }
 
-app.addFriend = function() {
-  var friend = $(this).user
+app.addFriend = function(className) {
+  console.log(className);
+  $('.' +className).css('color', "red");
 }
 
 app.handleSubmit = function(message) {
