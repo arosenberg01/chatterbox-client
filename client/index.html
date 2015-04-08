@@ -8,21 +8,37 @@
     <!-- dependencies -->
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="bower_components/backbone/backbone.js"></script>
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
     <script>
-    $(document).ready(function() {
-      app.init();
+    $(function() {
+      var messages = new Messages();
+      messages.loadMsgs();
+      var formView = new FormView({
+        el: $('#main'),
+        collection: messages,
+      });
+      var messagesView = new MessagesView({
+        el: $('#chats'),
+        collection: messages
+      });
+      setInterval(messages.loadMsgs.bind(messages), 1000);
+
+
+
+       // app.init();
     });
     </script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
-      <input type="text" id="message">
-      <button id="send">Send</button>
-      <button id="fetch">Fetch</button>
+      <form action="#" id="send" method="POST">
+        <!-- Your HTML goes here! -->
+        <input type="text" id="message">
+        <input type="submit" name="submit" class="submit">
+      </form>
       <div id="chats">
       </div>
     </div>
